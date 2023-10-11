@@ -1,0 +1,52 @@
+(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+	try { 		
+	//gs.log("Jiralog "+JSON.stringify(request.body.data));
+	var requestBody = request.body.data;
+	
+	// read the request boy and map with staging table fileds and creat/update a issue record
+	gs.log('jiralog '+ requestBody.issue.fields.project.name);
+	
+	var jr= new GlideRecord('u_rkdira');
+	jr.addQuery('u_issue_id',requestBody.issue.id);
+	jr.addQuery('u_project_key',requestBody.issue.fields.project.key);
+	jr.query();
+	if(!jr.next())
+	{		
+	
+	jr.initialize();
+	jr.u_project_name = requestBody.issue.fields.project.name;
+	jr.u_project_key = requestBody.issue.fields.project.key;
+	jr.u_issue_id = requestBody.issue.id;
+	jr.u_issue_key = requestBody.issue.key;
+	jr.u_summary= requestBody.issue.fields.summary;
+	jr.u_description=requestBody.issue.fields.description;
+	jr.u_comments=requestBody.issue.fields.comments;
+	for (var i = 0; i < jr.u_comments.length; i++) {
+     var comment = jr.u_comments[i];
+     var commentId = comment.id;
+     var commentBody = comment.body;
+     var commentAuthor = comment.author.displayName;
+	}
+	jr.insert();
+	gs.log('Jira Issue created: '+jr.u_issue_id);
+	}
+	
+	else{
+	
+	jr.u_summary= requestBody.issue.fields.summary;
+	jr.u_description=requestBody.issue.fields.description;
+	jr.u_comments=requestBody.issue.fields.comments;
+	
+	jr.update();
+	gs.log('Jira Issue updated: '+jr.u_issue_id);
+		
+	}
+
+ }
+catch(ex) {
+ var message = ex.message;
+}
+
+
+})(request, response);
