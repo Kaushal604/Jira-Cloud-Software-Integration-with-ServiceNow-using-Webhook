@@ -4,7 +4,7 @@
 	//gs.log("Jiralog "+JSON.stringify(request.body.data));
 	var requestBody = request.body.data;
 	
-	// read the request boy and map with staging table fileds and creat/update a issue record
+	// read the request body and map with staging table fileds and creat/update a issue record
 	gs.log('jiralog '+ requestBody.issue.fields.project.name);
 	
 	var jr= new GlideRecord('u_rkdira');
